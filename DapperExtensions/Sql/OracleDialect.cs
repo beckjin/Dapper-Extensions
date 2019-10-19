@@ -53,6 +53,22 @@ namespace DapperExtensions.Sql
             return sb.ToString();
         }
 
+        public override string GetLimitCountSql(string column, string tableName, string where, string orderBy, int count, IDictionary<string, object> parameters)
+        {
+            if (!string.IsNullOrEmpty(where))
+            {
+                where += " AND ROWNUM <= :count ";
+            }
+            else
+            {
+                where = " WHERE ROWNUM <= :count ";
+            }
+
+            string result = string.Format("SELECT {0} FROM {1} {2} {3} ", column, tableName, where, orderBy);
+            parameters.Add(":count", count);
+            return result;
+        }
+
         public override string QuoteString(string value)
         {
             if (value != null && value[0]=='`')

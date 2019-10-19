@@ -34,5 +34,12 @@ namespace DapperExtensions.Sql
             parameters.Add("@maxResults", maxResults);
             return result;
         }
+
+        public override string GetLimitCountSql(string column, string tableName, string where, string orderBy, int count, IDictionary<string, object> parameters)
+        {
+            string result = string.Format("SELECT {0} FROM {1} {2} {3} LIMIT @count", column, tableName, where, orderBy);
+            parameters.Add("@count", count);
+            return result;
+        }
     }
 }

@@ -60,6 +60,13 @@ namespace DapperExtensions.Sql
             return result;
         }
 
+        public override string GetLimitCountSql(string column, string tableName, string where, string orderBy, int count, IDictionary<string, object> parameters)
+        {
+            string result = string.Format("SELECT TOP (@_count) {0} FROM {1} {2} {3}", column, tableName, where, orderBy);
+            parameters.Add("@_count", count);
+            return result;
+        }
+
         protected string GetOrderByClause(string sql)
         {
             int orderByIndex = sql.LastIndexOf(" ORDER BY ", StringComparison.InvariantCultureIgnoreCase);

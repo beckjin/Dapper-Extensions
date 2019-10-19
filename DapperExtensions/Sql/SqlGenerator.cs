@@ -9,14 +9,15 @@ namespace DapperExtensions.Sql
     public interface ISqlGenerator
     {
         IDapperExtensionsConfiguration Configuration { get; }
-        
+
         string Select(IClassMapper classMap, IPredicate predicate, IList<ISort> sort, IDictionary<string, object> parameters);
         string SelectPaged(IClassMapper classMap, IPredicate predicate, IList<ISort> sort, int page, int resultsPerPage, IDictionary<string, object> parameters);
         string SelectSet(IClassMapper classMap, IPredicate predicate, IList<ISort> sort, int firstResult, int maxResults, IDictionary<string, object> parameters);
+        string SelectLimit(IClassMapper classMap, IPredicate predicate, IList<ISort> sort, int limitCount, IDictionary<string, object> parameters);
         string Count(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters);
 
         string Insert(IClassMapper classMap);
-        string Update(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters, bool ignoreAllKeyProperties);
+        string Update(IClassMapper classMap, IPredicate predicate, List<string> updateFileds, IDictionary<string, object> parameters, bool ignoreAllKeyProperties);
         string Delete(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters);
 
         string IdentitySql(IClassMapper classMap);
@@ -116,6 +117,33 @@ namespace DapperExtensions.Sql
             return sql;
         }
 
+        public virtual string SelectLimit(IClassMapper classMap, IPredicate predicate, IList<ISort> sort, int limitCount, IDictionary<string, object> parameters)
+        {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException("Parameters");
+            }
+
+            var culumns = BuildSelectColumns(classMap);
+
+            var tableName = GetTableName(classMap);
+
+            var where = string.Empty;
+            if (predicate != null)
+            {
+                where = $" WHERE {predicate.GetSql(this, parameters)}";
+            }
+
+            var orerBy = string.Empty;
+            if (sort != null)
+            {
+                string orderBy = sort.Select(s => GetColumnName(classMap, s.PropertyName, false) + (s.Ascending ? " ASC" : " DESC")).AppendStrings();
+                orerBy = $" ORDER BY {orderBy}";
+            }
+
+            string sql = Configuration.Dialect.GetLimitCountSql(culumns, tableName, where, orerBy, limitCount, parameters);
+            return sql;
+        }
 
         public virtual string Count(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters)
         {
@@ -136,7 +164,7 @@ namespace DapperExtensions.Sql
 
             return sql.ToString();
         }
-        
+
         public virtual string Insert(IClassMapper classMap)
         {
             var columns = classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity || p.KeyType == KeyType.TriggerIdentity));
@@ -166,7 +194,7 @@ namespace DapperExtensions.Sql
             return sql;
         }
 
-        public virtual string Update(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters, bool ignoreAllKeyProperties)
+        public virtual string Update(IClassMapper classMap, IPredicate predicate, List<string> updateFileds, IDictionary<string, object> parameters, bool ignoreAllKeyProperties)
         {
             if (predicate == null)
             {
@@ -177,7 +205,7 @@ namespace DapperExtensions.Sql
             {
                 throw new ArgumentNullException("Parameters");
             }
-            
+
             var columns = ignoreAllKeyProperties
                 ? classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly) && p.KeyType == KeyType.NotAKey)
                 : classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity || p.KeyType == KeyType.Assigned));
@@ -187,18 +215,22 @@ namespace DapperExtensions.Sql
                 throw new ArgumentException("No columns were mapped.");
             }
 
-            var setSql =
-                columns.Select(
-                    p =>
-                    string.Format(
-                        "{0} = {1}{2}", GetColumnName(classMap, p, false), Configuration.Dialect.ParameterPrefix, p.Name));
+            if (updateFileds != null && updateFileds.Any())
+            {
+                columns = columns.Where(_ => updateFileds.Contains(_.Name));
+            }
+
+            var setSql = columns.Select(
+                                   p =>
+                                   string.Format(
+                                       "{0} = {1}{2}", GetColumnName(classMap, p, false), Configuration.Dialect.ParameterPrefix, p.Name));
 
             return string.Format("UPDATE {0} SET {1} WHERE {2}",
                 GetTableName(classMap),
                 setSql.AppendStrings(),
                 predicate.GetSql(this, parameters));
         }
-        
+
         public virtual string Delete(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters)
         {
             if (predicate == null)
@@ -215,7 +247,7 @@ namespace DapperExtensions.Sql
             sql.Append(" WHERE ").Append(predicate.GetSql(this, parameters));
             return sql.ToString();
         }
-        
+
         public virtual string IdentitySql(IClassMapper classMap)
         {
             return Configuration.Dialect.GetIdentitySql(GetTableName(classMap));

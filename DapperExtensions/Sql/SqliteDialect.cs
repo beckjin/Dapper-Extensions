@@ -35,6 +35,13 @@ namespace DapperExtensions.Sql
             return result;
         }
 
+        public override string GetLimitCountSql(string column, string tableName, string where, string orderBy, int count, IDictionary<string, object> parameters)
+        {
+            string result = string.Format("SELECT {0} FROM {1} {2} {3} LIMIT @Count", column, tableName, where, orderBy);
+            parameters.Add("@Count", count);
+            return result;
+        }
+
         public override string GetColumnName(string prefix, string columnName, string alias)
         {
             if (string.IsNullOrWhiteSpace(columnName))
