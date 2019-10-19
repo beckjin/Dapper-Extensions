@@ -29,15 +29,14 @@ Naming Conventions
 
 # Installation
 
-For more information, please view our [Getting Started](https://github.com/tmsmith/Dapper-Extensions/wiki/Getting-Started) guide.
-
-http://nuget.org/List/Packages/DapperExtensions
+https://www.nuget.org/packages/DapperExtensions.NetCoreV2
 
 ```
-PM> Install-Package DapperExtensions
+PM> Install-Package DapperExtensions.NetCoreV2
 ```
 
 # Examples
+
 The following examples will use a Person POCO defined as:
 
 ```c#
@@ -60,6 +59,16 @@ using (SqlConnection cn = new SqlConnection(_connectionString))
     cn.Open();
     int personId = 1;
     Person person = cn.Get<Person>(personId);	
+    cn.Close();
+}
+```
+
+```c#
+using (SqlConnection cn = new SqlConnection(_connectionString))
+{
+    cn.Open();
+		IPredicate predicate = Predicates.Field<Person>(f => f.FirstName, Operator.Eq, "Foo");
+    Person person = cn.GetFirstOrDefault<Person>(predicate);	
     cn.Close();
 }
 ```
@@ -110,6 +119,21 @@ using (SqlConnection cn = new SqlConnection(_connectionString))
     Person person = cn.Get<Person>(personId);
     person.LastName = "Baz";
     cn.Update(person);
+    cn.Close();
+}
+```
+
+```c#
+using (SqlConnection cn = new SqlConnection(_connectionString))
+{
+    cn.Open();
+		Person person = new Person
+		{
+				FirstName = "Foo_a",
+				LastName = "Bar_a"
+		};
+		IPredicate predicate = Predicates.Field<Person>(f => f.FirstName, Operator.Eq, "Foo");
+		cn.Update<Person>(person, predicate, new List<string> { "FirstName", "LastName" });
     cn.Close();
 }
 ```
@@ -177,20 +201,3 @@ WHERE ([Person].[DateCreated] < @DateCreated_0)
 ```
 
 More information on predicates can be found in [our wiki](https://github.com/tmsmith/Dapper-Extensions/wiki/Predicates).
-
-
-# License
-
-Copyright 2011 Thad Smith, Page Brooks and contributors
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.

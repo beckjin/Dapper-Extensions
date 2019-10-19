@@ -212,7 +212,7 @@ namespace DapperExtensions.Tests.IntegrationTests.SqlServer
                 Db.Update(p2, pred2, new List<string> { "FirstName", "LastName" });
 
                 IPredicate pred3 = Predicates.Field<Person>(p => p.LastName, Operator.Eq, "Bar1");
-                var p3 = Db.GetOne<Person>(pred3);
+                var p3 = Db.GetFirstOrDefault<Person>(pred3);
                 Assert.AreEqual("Foo1", p3.FirstName);
             }
 

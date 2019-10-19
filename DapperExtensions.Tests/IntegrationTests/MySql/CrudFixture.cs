@@ -243,7 +243,7 @@ namespace DapperExtensions.Tests.IntegrationTests.MySql
                 Db.Update(p2, pred2, new List<string> { "FirstName", "LastName" });
 
                 IPredicate pred3 = Predicates.Field<Person>(p => p.LastName, Operator.Eq, "Bar1");
-                var p3 = Db.GetOne<Person>(pred3);
+                var p3 = Db.GetFirstOrDefault<Person>(pred3);
                 Assert.AreEqual("Foo1", p3.FirstName);
             }
 
@@ -321,7 +321,7 @@ namespace DapperExtensions.Tests.IntegrationTests.MySql
                 Db.Insert(new Person { Active = false, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow });
 
                 var predicate = Predicates.Field<Person>(f => f.Active, Operator.Eq, true);
-                Person person = Db.GetOne<Person>(predicate);
+                Person person = Db.GetFirstOrDefault<Person>(predicate);
                 Assert.IsTrue(person.FirstName == "a");
             }
         }

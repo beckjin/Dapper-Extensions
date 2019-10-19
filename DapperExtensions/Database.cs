@@ -21,8 +21,8 @@ namespace DapperExtensions
         T RunInTransaction<T>(Func<T> func);
         T Get<T>(dynamic id, IDbTransaction transaction, int? commandTimeout = null) where T : class;
         T Get<T>(dynamic id, int? commandTimeout = null) where T : class;
-        T GetOne<T>(IDbTransaction transaction, object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class;
-        T GetOne<T>(object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class;
+        T GetFirstOrDefault<T>(IDbTransaction transaction, object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class;
+        T GetFirstOrDefault<T>(object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class;
         int Insert<T>(IEnumerable<T> entities, IDbTransaction transaction, int? commandTimeout = null) where T : class;
         int Insert<T>(IEnumerable<T> entities, int? commandTimeout = null) where T : class;
         dynamic Insert<T>(T entity, IDbTransaction transaction, int? commandTimeout = null) where T : class;
@@ -57,8 +57,8 @@ namespace DapperExtensions
 
         Task<T> GetAsync<T>(dynamic id, IDbTransaction transaction, int? commandTimeout = null) where T : class;
         Task<T> GetAsync<T>(dynamic id, int? commandTimeout = null) where T : class;
-        Task<T> GetOneAsync<T>(IDbTransaction transaction, object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class;
-        Task<T> GetOneAsync<T>(object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class;
+        Task<T> GetFirstOrDefaultAsync<T>(IDbTransaction transaction, object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class;
+        Task<T> GetFirstOrDefaultAsync<T>(object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class;
         Task<int> InsertAsync<T>(IEnumerable<T> entities, IDbTransaction transaction, int? commandTimeout = null) where T : class;
         Task<int> InsertAsync<T>(IEnumerable<T> entities, int? commandTimeout = null) where T : class;
         Task<dynamic> InsertAsync<T>(T entity, IDbTransaction transaction, int? commandTimeout = null) where T : class;
@@ -199,14 +199,14 @@ namespace DapperExtensions
             return (T)_dapper.Get<T>(Connection, id, _transaction, commandTimeout);
         }
 
-        public T GetOne<T>(IDbTransaction transaction, object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class
+        public T GetFirstOrDefault<T>(IDbTransaction transaction, object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class
         {
-            return _dapper.Get<T>(Connection, predicate, sort, transaction, commandTimeout, false);
+            return _dapper.GetFirstOrDefault<T>(Connection, predicate, sort, transaction, commandTimeout, false);
         }
 
-        public T GetOne<T>(object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class
+        public T GetFirstOrDefault<T>(object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class
         {
-            return _dapper.Get<T>(Connection, predicate, sort, _transaction, commandTimeout, false);
+            return _dapper.GetFirstOrDefault<T>(Connection, predicate, sort, _transaction, commandTimeout, false);
         }
 
         public int Insert<T>(IEnumerable<T> entities, IDbTransaction transaction, int? commandTimeout) where T : class
@@ -382,14 +382,14 @@ namespace DapperExtensions
             return await _dapper.GetAsync<T>(Connection, id, _transaction, commandTimeout);
         }
 
-        public async Task<T> GetOneAsync<T>(IDbTransaction transaction, object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class
+        public async Task<T> GetFirstOrDefaultAsync<T>(IDbTransaction transaction, object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class
         {
-            return await _dapper.GetAsync<T>(Connection, predicate, sort, transaction, commandTimeout);
+            return await _dapper.GetFirstOrDefaultAsync<T>(Connection, predicate, sort, transaction, commandTimeout);
         }
 
-        public async Task<T> GetOneAsync<T>(object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class
+        public async Task<T> GetFirstOrDefaultAsync<T>(object predicate = null, IList<ISort> sort = null, int? commandTimeout = null) where T : class
         {
-            return await _dapper.GetAsync<T>(Connection, predicate, sort, _transaction, commandTimeout);
+            return await _dapper.GetFirstOrDefaultAsync<T>(Connection, predicate, sort, _transaction, commandTimeout);
         }
 
         public async Task<int> InsertAsync<T>(IEnumerable<T> entities, IDbTransaction transaction, int? commandTimeout = null) where T : class

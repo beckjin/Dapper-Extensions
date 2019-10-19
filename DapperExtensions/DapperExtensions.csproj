@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <PackageId>DapperExtensions.NETCore</PackageId>
+    <PackageId>DapperExtensions.NetCoreV2</PackageId>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>2.0.0</Version>
-    <AssemblyTitle>$(AssemblyName) ($(TargetFramework))</AssemblyTitle>
-    <PackageTags>$(AssemblyName)</PackageTags>
+    <Version>2.0.30</Version>
+    <AssemblyTitle>DapperExtensions.NetCore</AssemblyTitle>
+    <PackageTags>Dapper,NetCore</PackageTags>
     <DebugSymbols>true</DebugSymbols>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
@@ -23,7 +23,6 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
   </ItemGroup>
  
 </Project>

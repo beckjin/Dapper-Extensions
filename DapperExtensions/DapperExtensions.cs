@@ -187,9 +187,9 @@ namespace DapperExtensions
         /// <summary>
         /// Executes a query for the specified id, returning the data typed as per T
         /// </summary>
-        public static T GetOne<T>(this IDbConnection connection, object predicate = null, IList<ISort> sort = null, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        public static T GetFirstOrDefault<T>(this IDbConnection connection, object predicate = null, IList<ISort> sort = null, IDbTransaction transaction = null, int? commandTimeout = null, bool buffered = false) where T : class
         {
-            return Instance.Get<T>(connection, predicate, sort, transaction, commandTimeout, false);
+            return Instance.GetFirstOrDefault<T>(connection, predicate, sort, transaction, commandTimeout, buffered);
         }
 
         /// <summary>
@@ -265,9 +265,9 @@ namespace DapperExtensions
         /// <summary>
         /// Executes a query for the specified id, returning the data typed as per T
         /// </summary>
-        public static async Task<T> GetOneAsync<T>(this IDbConnection connection, object predicate = null, IList<ISort> sort = null, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        public static async Task<T> GetFirstOrDefaultAsync<T>(this IDbConnection connection, object predicate = null, IList<ISort> sort = null, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            return await Instance.GetAsync<T>(connection, predicate, sort, transaction, commandTimeout);
+            return await Instance.GetFirstOrDefaultAsync<T>(connection, predicate, sort, transaction, commandTimeout);
         }
 
         /// <summary>
