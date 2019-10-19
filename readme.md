@@ -67,7 +67,7 @@ using (SqlConnection cn = new SqlConnection(_connectionString))
 using (SqlConnection cn = new SqlConnection(_connectionString))
 {
     cn.Open();
-		IPredicate predicate = Predicates.Field<Person>(f => f.FirstName, Operator.Eq, "Foo");
+    IPredicate predicate = Predicates.Field<Person>(f => f.FirstName, Operator.Eq, "Foo");
     Person person = cn.GetFirstOrDefault<Person>(predicate);	
     cn.Close();
 }
@@ -127,13 +127,13 @@ using (SqlConnection cn = new SqlConnection(_connectionString))
 using (SqlConnection cn = new SqlConnection(_connectionString))
 {
     cn.Open();
-		Person person = new Person
-		{
-				FirstName = "Foo_a",
-				LastName = "Bar_a"
-		};
-		IPredicate predicate = Predicates.Field<Person>(f => f.FirstName, Operator.Eq, "Foo");
-		cn.Update<Person>(person, predicate, new List<string> { "FirstName", "LastName" });
+    Person person = new Person
+    {
+        FirstName = "Foo_a",
+        LastName = "Bar_a"
+    };
+    IPredicate predicate = Predicates.Field<Person>(f => f.FirstName, Operator.Eq, "Foo");
+    cn.Update<Person>(person, predicate, new List<string> { "FirstName", "LastName" });
     cn.Close();
 }
 ```
