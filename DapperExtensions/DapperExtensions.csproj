@@ -3,7 +3,9 @@
   <PropertyGroup>
     <PackageId>DapperExtensions.NetCoreV2</PackageId>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>2.0.30</Version>
+    <Version>2.0.30.1</Version>
+		<Authors>Beck Jin</Authors>
+    <Title>DapperExtensions.NetCore</Title>
     <AssemblyTitle>DapperExtensions.NetCore</AssemblyTitle>
     <PackageTags>Dapper,NetCore</PackageTags>
     <DebugSymbols>true</DebugSymbols>
@@ -11,9 +13,12 @@
     <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <LangVersion>latest</LangVersion>
+    <PackageProjectUrl>https://github.com/beckjin/Dapper-Extensions/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/beckjin/Dapper-Extensions/</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <SignAssembly>true</SignAssembly>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <Copyright>Copyright © 2019</Copyright>
     <Description>
       Dapper Extensions is a small library that complements Dapper by adding basic CRUD operations (Get, Insert, Update, Delete) for your POCOs. For more advanced querying scenarios, Dapper Extensions provides a predicate system. The goal of this library is to keep your POCOs pure by not requiring any attributes or base class inheritance.
