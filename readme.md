@@ -29,10 +29,10 @@ Naming Conventions
 
 # Installation
 
-https://www.nuget.org/packages/DapperExtensions.NetCoreV2
+https://www.nuget.org/packages/Dapper.Extensions.Core/
 
 ```
-PM> Install-Package DapperExtensions.NetCoreV2
+PM> Install-Package Dapper.Extensions.Core
 ```
 
 # Examples
