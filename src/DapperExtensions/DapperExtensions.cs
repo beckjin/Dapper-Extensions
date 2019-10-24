@@ -163,9 +163,9 @@ namespace DapperExtensions
         /// <summary>
         /// Executes an update query for the specified entity.
         /// </summary>
-        public static int Update<T>(this IDbConnection connection, T entity, object predicate, List<string> updateFileds, IDbTransaction transaction = null, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class
+        public static int Update<T>(this IDbConnection connection, object entity, object predicate, IDbTransaction transaction = null, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class
         {
-            return Instance.Update<T>(connection, entity, predicate, updateFileds, transaction, commandTimeout, ignoreAllKeyProperties);
+            return Instance.Update<T>(connection, entity, predicate, transaction, commandTimeout, ignoreAllKeyProperties);
         }
 
         /// <summary>
@@ -300,9 +300,9 @@ namespace DapperExtensions
         /// <summary>
         /// Executes an update query for the specified entity.
         /// </summary>
-        public static async Task<int> UpdateAsync<T>(this IDbConnection connection, T entity, object predicate, List<string> updateFileds, IDbTransaction transaction = null, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class
+        public static async Task<int> UpdateAsync<T>(this IDbConnection connection, object entity, object predicate, IDbTransaction transaction = null, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class
         {
-            return await Instance.UpdateAsync<T>(connection, entity, predicate, updateFileds, transaction, commandTimeout, ignoreAllKeyProperties);
+            return await Instance.UpdateAsync<T>(connection, entity, predicate, transaction, commandTimeout, ignoreAllKeyProperties);
         }
 
         /// <summary>

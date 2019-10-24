@@ -29,8 +29,8 @@ namespace DapperExtensions
         dynamic Insert<T>(T entity, int? commandTimeout = null) where T : class;
         int Update<T>(T entity, IDbTransaction transaction, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
         int Update<T>(T entity, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
-        int Update<T>(T entity, object predicate, List<string> updateFileds, IDbTransaction transaction, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
-        int Update<T>(T entity, object predicate, List<string> updateFileds, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
+        int Update<T>(object entity, object predicate, IDbTransaction transaction, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
+        int Update<T>(object entity, object predicate, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
         int Delete<T>(T entity, IDbTransaction transaction, int? commandTimeout = null) where T : class;
         int Delete<T>(T entity, int? commandTimeout = null) where T : class;
         int Delete<T>(object predicate, IDbTransaction transaction, int? commandTimeout = null) where T : class;
@@ -65,8 +65,8 @@ namespace DapperExtensions
         Task<dynamic> InsertAsync<T>(T entity, int? commandTimeout = null) where T : class;
         Task<int> UpdateAsync<T>(T entity, IDbTransaction transaction, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
         Task<int> UpdateAsync<T>(T entity, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
-        Task<int> UpdateAsync<T>(T entity, object predicate, List<string> updateFileds, IDbTransaction transaction, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
-        Task<int> UpdateAsync<T>(T entity, object predicate, List<string> updateFileds, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
+        Task<int> UpdateAsync<T>(object entity, object predicate, IDbTransaction transaction, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
+        Task<int> UpdateAsync<T>(object entity, object predicate, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class;
         Task<int> DeleteAsync<T>(T entity, IDbTransaction transaction, int? commandTimeout = null) where T : class;
         Task<int> DeleteAsync<T>(T entity, int? commandTimeout = null) where T : class;
         Task<int> DeleteAsync<T>(object predicate, IDbTransaction transaction, int? commandTimeout = null) where T : class;
@@ -239,14 +239,14 @@ namespace DapperExtensions
             return _dapper.Update<T>(Connection, entity, _transaction, commandTimeout, ignoreAllKeyProperties);
         }
 
-        public int Update<T>(T entity, object predicate, List<string> updateFileds, IDbTransaction transaction, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class
+        public int Update<T>(object entity, object predicate, IDbTransaction transaction, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class
         {
-            return _dapper.Update<T>(Connection, entity, predicate, updateFileds, transaction, commandTimeout, ignoreAllKeyProperties);
+            return _dapper.Update<T>(Connection, entity, predicate, transaction, commandTimeout, ignoreAllKeyProperties);
         }
 
-        public int Update<T>(T entity, object predicate, List<string> updateFileds, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class
+        public int Update<T>(object entity, object predicate, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class
         {
-            return _dapper.Update<T>(Connection, entity, predicate, updateFileds, _transaction, commandTimeout, ignoreAllKeyProperties);
+            return _dapper.Update<T>(Connection, entity, predicate, _transaction, commandTimeout, ignoreAllKeyProperties);
         }
 
         public int Delete<T>(T entity, IDbTransaction transaction, int? commandTimeout) where T : class
@@ -422,14 +422,14 @@ namespace DapperExtensions
             return await _dapper.UpdateAsync<T>(Connection, entity, _transaction, commandTimeout, ignoreAllKeyProperties);
         }
 
-        public async Task<int> UpdateAsync<T>(T entity, object predicate, List<string> updateFileds, IDbTransaction transaction, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class
+        public async Task<int> UpdateAsync<T>(object entity, object predicate, IDbTransaction transaction, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class
         {
-            return await _dapper.UpdateAsync<T>(Connection, entity, predicate, updateFileds, transaction, commandTimeout, ignoreAllKeyProperties);
+            return await _dapper.UpdateAsync<T>(Connection, entity, predicate, transaction, commandTimeout, ignoreAllKeyProperties);
         }
 
-        public async Task<int> UpdateAsync<T>(T entity, object predicate, List<string> updateFileds, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class
+        public async Task<int> UpdateAsync<T>(object entity, object predicate, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class
         {
-            return await _dapper.UpdateAsync<T>(Connection, entity, predicate, updateFileds, _transaction, commandTimeout, ignoreAllKeyProperties);
+            return await _dapper.UpdateAsync<T>(Connection, entity, predicate, _transaction, commandTimeout, ignoreAllKeyProperties);
         }
 
         public async Task<int> DeleteAsync<T>(T entity, IDbTransaction transaction, int? commandTimeout = null) where T : class

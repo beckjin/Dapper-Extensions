@@ -233,14 +233,8 @@ namespace DapperExtensions.Tests.IntegrationTests.MySql
                 };
                 int id = Db.Insert(p1);
 
-                Person p2 = new Person
-                {
-                    FirstName = "Foo1",
-                    LastName = "Bar1"
-                };
-
                 IPredicate pred2 = Predicates.Field<Person>(p => p.LastName, Operator.Eq, "Bar");
-                Db.Update(p2, pred2, new List<string> { "FirstName", "LastName" });
+                Db.Update<Person>(new { FirstName = "Foo1", LastName = "Bar1" }, pred2);
 
                 IPredicate pred3 = Predicates.Field<Person>(p => p.LastName, Operator.Eq, "Bar1");
                 var p3 = Db.GetFirstOrDefault<Person>(pred3);

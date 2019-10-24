@@ -21,7 +21,7 @@ namespace DapperExtensions
         int Insert<T>(IDbConnection connection, IEnumerable<T> entities, IDbTransaction transaction, int? commandTimeout) where T : class;
         dynamic Insert<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout) where T : class;
         int Update<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties) where T : class;
-        int Update<T>(IDbConnection connection, T entity, object predicate, List<string> updateFileds, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties) where T : class;
+        int Update<T>(IDbConnection connection, object entity, object predicate, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties) where T : class;
         int Delete<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout) where T : class;
         int Delete<T>(IDbConnection connection, object predicate, IDbTransaction transaction, int? commandTimeout) where T : class;
         T Get<T>(IDbConnection connection, dynamic id, IDbTransaction transaction, int? commandTimeout) where T : class;
@@ -39,7 +39,7 @@ namespace DapperExtensions
 
         Task<int> InsertAsync<T>(IDbConnection connection, IEnumerable<T> entities, IDbTransaction transaction, int? commandTimeout) where T : class;
         Task<dynamic> InsertAsync<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout) where T : class;
-        Task<int> UpdateAsync<T>(IDbConnection connection, T entity, object predicate, List<string> updateFileds, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties) where T : class;
+        Task<int> UpdateAsync<T>(IDbConnection connection, object entity, object predicate, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties) where T : class;
         Task<int> UpdateAsync<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties) where T : class;
         Task<int> DeleteAsync<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout) where T : class;
         Task<int> DeleteAsync<T>(IDbConnection connection, object predicate, IDbTransaction transaction, int? commandTimeout) where T : class;
@@ -109,7 +109,7 @@ namespace DapperExtensions
             }
 
             string sql = SqlGenerator.Insert(classMap);
-
+            PrintSQL(sql);
             if (triggerIdentityColumn == null)
             {
                 return connection.Execute(sql, entities, transaction, commandTimeout, CommandType.Text);
@@ -201,6 +201,8 @@ namespace DapperExtensions
             {
                 keyValues.Add(column.Name, column.PropertyInfo.GetValue(entity, null));
             }
+            
+            PrintSQL(sql);
 
             if (keyValues.Count == 1)
             {
@@ -215,7 +217,7 @@ namespace DapperExtensions
             IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
             IPredicate predicate = GetKeyPredicate<T>(classMap, entity);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            string sql = SqlGenerator.Update(classMap, predicate, null, parameters, ignoreAllKeyProperties);
+            string sql = SqlGenerator.Update(classMap, predicate, parameters, ignoreAllKeyProperties);
             DynamicParameters dynamicParameters = new DynamicParameters();
 
             var columns = ignoreAllKeyProperties
@@ -231,25 +233,20 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text);
         }
 
-        public int Update<T>(IDbConnection connection, T entity, object predicate, List<string> updateFileds, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties = false) where T : class
+        public int Update<T>(IDbConnection connection, object entity, object predicate, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties = false) where T : class
         {
+            var updateFileds = ReflectionHelper.GetObjectValues(entity);
             IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
             IPredicate wherePredicate = GetPredicate(classMap, predicate);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            string sql = SqlGenerator.Update(classMap, wherePredicate, updateFileds, parameters, ignoreAllKeyProperties);
+            string sql = SqlGenerator.Update(classMap, updateFileds, wherePredicate, parameters, ignoreAllKeyProperties);
+
             DynamicParameters dynamicParameters = new DynamicParameters();
-
-            var columns = classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity));
-            if (updateFileds != null && updateFileds.Any())
-            {
-                columns = columns.Where(p => updateFileds.Contains(p.Name));
-            }
-
-            foreach (var property in ReflectionHelper.GetObjectValues(entity).Where(property => columns.Any(c => c.Name == property.Key)))
+            foreach (var property in updateFileds)
             {
                 dynamicParameters.Add(property.Key, property.Value);
             }
@@ -258,7 +255,7 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text);
         }
 
@@ -330,7 +327,7 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return (int)connection.Query(sql, dynamicParameters, transaction, false, commandTimeout, CommandType.Text).Single().Total;
         }
 
@@ -353,7 +350,7 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return connection.Query<T>(sql, dynamicParameters, transaction, buffered, commandTimeout, CommandType.Text);
         }
 
@@ -366,7 +363,7 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return connection.Query<T>(sql, dynamicParameters, transaction, buffered, commandTimeout, CommandType.Text);
         }
 
@@ -379,7 +376,7 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return connection.Query<T>(sql, dynamicParameters, transaction, buffered, commandTimeout, CommandType.Text);
         }
 
@@ -392,7 +389,7 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return connection.Query<T>(sql, dynamicParameters, transaction, buffered, commandTimeout, CommandType.Text);
         }
 
@@ -405,7 +402,7 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return connection.Execute(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text);
         }
 
@@ -484,7 +481,7 @@ namespace DapperExtensions
             }
 
             string sql = SqlGenerator.Insert(classMap);
-
+            PrintSQL(sql);
             return await connection.ExecuteAsync(sql, entities, transaction, commandTimeout, CommandType.Text);
         }
 
@@ -533,7 +530,7 @@ namespace DapperExtensions
             {
                 keyValues.Add(column.Name, column.PropertyInfo.GetValue(entity, null));
             }
-
+            PrintSQL(sql);
             if (keyValues.Count == 1)
             {
                 return keyValues.First().Value;
@@ -547,7 +544,7 @@ namespace DapperExtensions
             IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
             IPredicate predicate = GetKeyPredicate<T>(classMap, entity);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            string sql = SqlGenerator.Update(classMap, predicate, null, parameters, ignoreAllKeyProperties);
+            string sql = SqlGenerator.Update(classMap, predicate, parameters, ignoreAllKeyProperties);
             DynamicParameters dynamicParameters = new DynamicParameters();
 
             var columns = classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity));
@@ -560,24 +557,18 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return await connection.ExecuteAsync(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text);
         }
 
-        public async Task<int> UpdateAsync<T>(IDbConnection connection, T entity, object predicate, List<string> updateFileds, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties = false) where T : class
+        public async Task<int> UpdateAsync<T>(IDbConnection connection, object entity, object predicate, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties = false) where T : class
         {
             IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
             IPredicate wherePredicate = GetPredicate(classMap, predicate);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            string sql = SqlGenerator.Update(classMap, wherePredicate, updateFileds, parameters, ignoreAllKeyProperties);
+            string sql = SqlGenerator.Update(classMap, wherePredicate, parameters, ignoreAllKeyProperties);
             DynamicParameters dynamicParameters = new DynamicParameters();
-
             var columns = classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity));
-            if (updateFileds != null && updateFileds.Any())
-            {
-                columns = columns.Where(p => updateFileds.Contains(p.Name));
-            }
-
             foreach (var property in ReflectionHelper.GetObjectValues(entity).Where(property => columns.Any(c => c.Name == property.Key)))
             {
                 dynamicParameters.Add(property.Key, property.Value);
@@ -587,7 +578,7 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return await connection.ExecuteAsync(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text);
         }
 
@@ -659,7 +650,7 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return (await connection.QueryAsync<int>(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text)).Single();
         }
 
@@ -682,7 +673,7 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return await connection.QueryAsync<T>(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text);
         }
 
@@ -695,7 +686,7 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return await connection.QueryAsync<T>(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text);
         }
 
@@ -708,7 +699,7 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return await connection.QueryAsync<T>(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text);
         }
 
@@ -721,7 +712,7 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return await connection.QueryAsync<T>(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text);
         }
         protected async Task<int> DeleteAsync<T>(IDbConnection connection, IClassMapper classMap, IPredicate predicate, IDbTransaction transaction, int? commandTimeout) where T : class
@@ -733,7 +724,7 @@ namespace DapperExtensions
             {
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-
+            PrintSQL(sql);
             return await connection.ExecuteAsync(sql, dynamicParameters, transaction, commandTimeout, CommandType.Text);
         }
 
@@ -893,5 +884,14 @@ namespace DapperExtensions
         }
 
         #endregion
+
+        private void PrintSQL(string sql)
+        {
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            if (environment != null && environment == "DEVELOPMENT")
+            {
+                Console.WriteLine(sql);
+            }
+        }
     }
 }

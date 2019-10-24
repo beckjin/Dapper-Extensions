@@ -17,7 +17,9 @@ namespace DapperExtensions.Sql
         string Count(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters);
 
         string Insert(IClassMapper classMap);
-        string Update(IClassMapper classMap, IPredicate predicate, List<string> updateFileds, IDictionary<string, object> parameters, bool ignoreAllKeyProperties);
+        string Update(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters, bool ignoreAllKeyProperties);
+        string Update(IClassMapper classMap, IDictionary<string, object> updateFileds, IPredicate predicate, IDictionary<string, object> parameters, bool ignoreAllKeyProperties);
+
         string Delete(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters);
 
         string IdentitySql(IClassMapper classMap);
@@ -194,7 +196,7 @@ namespace DapperExtensions.Sql
             return sql;
         }
 
-        public virtual string Update(IClassMapper classMap, IPredicate predicate, List<string> updateFileds, IDictionary<string, object> parameters, bool ignoreAllKeyProperties)
+        public virtual string Update(IClassMapper classMap, IPredicate predicate, IDictionary<string, object> parameters, bool ignoreAllKeyProperties)
         {
             if (predicate == null)
             {
@@ -215,10 +217,45 @@ namespace DapperExtensions.Sql
                 throw new ArgumentException("No columns were mapped.");
             }
 
-            if (updateFileds != null && updateFileds.Any())
+            var setSql = columns.Select(
+                                   p =>
+                                   string.Format(
+                                       "{0} = {1}{2}", GetColumnName(classMap, p, false), Configuration.Dialect.ParameterPrefix, p.Name));
+
+            return string.Format("UPDATE {0} SET {1} WHERE {2}",
+                GetTableName(classMap),
+                setSql.AppendStrings(),
+                predicate.GetSql(this, parameters));
+        }
+
+        public virtual string Update(IClassMapper classMap, IDictionary<string, object> updateFields, IPredicate predicate, IDictionary<string, object> parameters, bool ignoreAllKeyProperties)
+        {
+            if (predicate == null)
             {
-                columns = columns.Where(_ => updateFileds.Contains(_.Name));
+                throw new ArgumentNullException("Predicate");
             }
+
+            if (parameters == null)
+            {
+                throw new ArgumentNullException("Parameters");
+            }
+
+            if (updateFields == null || !updateFields.Any())
+            {
+                throw new ArgumentNullException("UpdateFields");
+            }
+
+            var columns = ignoreAllKeyProperties
+                ? classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly) && p.KeyType == KeyType.NotAKey)
+                : classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity || p.KeyType == KeyType.Assigned));
+
+            columns = columns.Where(item => updateFields.Keys.Contains(item.Name));
+
+            if (!columns.Any())
+            {
+                throw new ArgumentException("No columns were mapped.");
+            }
+
 
             var setSql = columns.Select(
                                    p =>
