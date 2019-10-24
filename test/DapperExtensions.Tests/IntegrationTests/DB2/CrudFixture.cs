@@ -232,7 +232,7 @@ namespace DapperExtensions.Tests.IntegrationTests.DB2
                 Db.Insert(new Person { Active = 0, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow });
 
                 var predicate = Predicates.Field<Person>(f => f.Active, Operator.Eq, 1);
-                IEnumerable<Person> list = Db.GetList<Person>(predicate, null);
+                IEnumerable<Person> list = Db.GetList<Person>(predicate);
                 Assert.AreEqual(2, list.Count());
                 Assert.IsTrue(list.All(p => p.FirstName == "a" || p.FirstName == "c"));
             }
@@ -246,7 +246,7 @@ namespace DapperExtensions.Tests.IntegrationTests.DB2
                 Db.Insert(new Person { Active = 0, FirstName = "d", LastName = "d1", DateCreated = DateTime.UtcNow });
 
                 var predicate = new { Active = 1, FirstName = "c" };
-                IEnumerable<Person> list = Db.GetList<Person>(predicate, null);
+                IEnumerable<Person> list = Db.GetList<Person>(predicate);
                 Assert.AreEqual(1, list.Count());
                 Assert.IsTrue(list.All(p => p.FirstName == "c"));
             }

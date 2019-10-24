@@ -203,17 +203,9 @@ namespace DapperExtensions
         /// <summary>
         /// Executes a select query using the specified predicate, returning an IEnumerable data typed as per T.
         /// </summary>
-        public static IEnumerable<T> GetList<T>(this IDbConnection connection, object predicate = null, IList<ISort> sort = null, IDbTransaction transaction = null, int? commandTimeout = null, bool buffered = false) where T : class
+        public static IEnumerable<T> GetList<T>(this IDbConnection connection, object predicate = null, IList<ISort> sort = null, int? limitCount = null, IDbTransaction transaction = null, int? commandTimeout = null, bool buffered = false) where T : class
         {
-            return Instance.GetList<T>(connection, predicate, sort, transaction, commandTimeout, buffered);
-        }
-
-        /// <summary>
-        /// Executes a select query using the specified predicate, returning an IEnumerable data typed as per T.
-        /// </summary>
-        public static IEnumerable<T> GetList<T>(this IDbConnection connection, int limitCount, object predicate = null, IList<ISort> sort = null, IDbTransaction transaction = null, int? commandTimeout = null, bool buffered = false) where T : class
-        {
-            return Instance.GetList<T>(connection, limitCount, predicate, sort, transaction, commandTimeout, buffered);
+            return Instance.GetList<T>(connection, predicate, sort, limitCount, transaction, commandTimeout, buffered);
         }
 
         /// <summary>
@@ -324,17 +316,9 @@ namespace DapperExtensions
         /// <summary>
         /// Executes a select query using the specified predicate, returning an IEnumerable data typed as per T.
         /// </summary>
-        public static async Task<IEnumerable<T>> GetListAsync<T>(this IDbConnection connection, object predicate = null, IList<ISort> sort = null, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        public static async Task<IEnumerable<T>> GetListAsync<T>(this IDbConnection connection, object predicate = null, IList<ISort> sort = null, int? limitCount = null, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            return await Instance.GetListAsync<T>(connection, predicate, sort, transaction, commandTimeout);
-        }
-
-        /// <summary>
-        /// Executes a select query using the specified predicate, returning an IEnumerable data typed as per T.
-        /// </summary>
-        public static async Task<IEnumerable<T>> GetListAsync<T>(this IDbConnection connection, int limitCount, object predicate = null, IList<ISort> sort = null, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
-        {
-            return await Instance.GetListAsync<T>(connection, limitCount, predicate, sort, transaction, commandTimeout);
+            return await Instance.GetListAsync<T>(connection, predicate, sort, limitCount, transaction, commandTimeout);
         }
 
         /// <summary>

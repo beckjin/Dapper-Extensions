@@ -26,8 +26,7 @@ namespace DapperExtensions
         int Delete<T>(IDbConnection connection, object predicate, IDbTransaction transaction, int? commandTimeout) where T : class;
         T Get<T>(IDbConnection connection, dynamic id, IDbTransaction transaction, int? commandTimeout) where T : class;
         T GetFirstOrDefault<T>(IDbConnection connection, object predicate, IList<ISort> sort, IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class;
-        IEnumerable<T> GetList<T>(IDbConnection connection, object predicate, IList<ISort> sort, IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class;
-        IEnumerable<T> GetList<T>(IDbConnection connection, int limitCount, object predicate, IList<ISort> sort, IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class;
+        IEnumerable<T> GetList<T>(IDbConnection connection, object predicate, IList<ISort> sort, int? limitCount, IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class;
         IEnumerable<T> GetPage<T>(IDbConnection connection, object predicate, IList<ISort> sort, int page, int resultsPerPage, IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class;
         IEnumerable<T> GetSet<T>(IDbConnection connection, object predicate, IList<ISort> sort, int firstResult, int maxResults, IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class;
         int Count<T>(IDbConnection connection, object predicate, IDbTransaction transaction, int? commandTimeout) where T : class;
@@ -46,8 +45,7 @@ namespace DapperExtensions
 
         Task<T> GetAsync<T>(IDbConnection connection, dynamic id, IDbTransaction transaction, int? commandTimeout) where T : class;
         Task<T> GetFirstOrDefaultAsync<T>(IDbConnection connection, object predicate, IList<ISort> sort, IDbTransaction transaction, int? commandTimeout) where T : class;
-        Task<IEnumerable<T>> GetListAsync<T>(IDbConnection connection, object predicate, IList<ISort> sort, IDbTransaction transaction, int? commandTimeout) where T : class;
-        Task<IEnumerable<T>> GetListAsync<T>(IDbConnection connection, int limitCount, object predicate, IList<ISort> sort, IDbTransaction transaction, int? commandTimeout) where T : class;
+        Task<IEnumerable<T>> GetListAsync<T>(IDbConnection connection, object predicate, IList<ISort> sort, int? limitCount, IDbTransaction transaction, int? commandTimeout) where T : class;
         Task<IEnumerable<T>> GetPageAsync<T>(IDbConnection connection, object predicate, IList<ISort> sort, int page, int resultsPerPage, IDbTransaction transaction, int? commandTimeout) where T : class;
         Task<IEnumerable<T>> GetSetAsync<T>(IDbConnection connection, object predicate, IList<ISort> sort, int firstResult, int maxResults, IDbTransaction transaction, int? commandTimeout) where T : class;
         Task<int> CountAsync<T>(IDbConnection connection, object predicate, IDbTransaction transaction, int? commandTimeout) where T : class;
@@ -201,7 +199,7 @@ namespace DapperExtensions
             {
                 keyValues.Add(column.Name, column.PropertyInfo.GetValue(entity, null));
             }
-            
+
             PrintSQL(sql);
 
             if (keyValues.Count == 1)
@@ -288,18 +286,18 @@ namespace DapperExtensions
             return GetLimit<T>(connection, classMap, wherePredicate, sort, 1, transaction, commandTimeout, buffered).FirstOrDefault();
         }
 
-        public IEnumerable<T> GetList<T>(IDbConnection connection, object predicate, IList<ISort> sort, IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class
+        public IEnumerable<T> GetList<T>(IDbConnection connection, object predicate, IList<ISort> sort, int? limitCount, IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class
         {
             IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
             IPredicate wherePredicate = GetPredicate(classMap, predicate);
-            return GetList<T>(connection, classMap, wherePredicate, sort, transaction, commandTimeout, buffered);
-        }
-
-        public IEnumerable<T> GetList<T>(IDbConnection connection, int limitCount, object predicate, IList<ISort> sort, IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class
-        {
-            IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
-            IPredicate wherePredicate = GetPredicate(classMap, predicate);
-            return GetLimit<T>(connection, classMap, wherePredicate, sort, limitCount, transaction, commandTimeout, buffered);
+            if (limitCount == null)
+            {
+                return GetList<T>(connection, classMap, wherePredicate, sort, transaction, commandTimeout, buffered);
+            }
+            else
+            {
+                return GetLimit<T>(connection, classMap, wherePredicate, sort, limitCount.Value, transaction, commandTimeout, buffered);
+            }
         }
 
         public IEnumerable<T> GetPage<T>(IDbConnection connection, object predicate, IList<ISort> sort, int page, int resultsPerPage, IDbTransaction transaction, int? commandTimeout, bool buffered) where T : class
@@ -611,18 +609,18 @@ namespace DapperExtensions
             return (await GetLimitAsync<T>(connection, classMap, 1, wherePredicate, sort, transaction, commandTimeout)).FirstOrDefault();
         }
 
-        public async Task<IEnumerable<T>> GetListAsync<T>(IDbConnection connection, object predicate, IList<ISort> sort, IDbTransaction transaction, int? commandTimeout) where T : class
+        public async Task<IEnumerable<T>> GetListAsync<T>(IDbConnection connection, object predicate, IList<ISort> sort, int? limitCount, IDbTransaction transaction, int? commandTimeout) where T : class
         {
             IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
             IPredicate wherePredicate = GetPredicate(classMap, predicate);
-            return await GetListAsync<T>(connection, classMap, wherePredicate, sort, transaction, commandTimeout);
-        }
-
-        public async Task<IEnumerable<T>> GetListAsync<T>(IDbConnection connection, int limitCount, object predicate, IList<ISort> sort, IDbTransaction transaction, int? commandTimeout) where T : class
-        {
-            IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
-            IPredicate wherePredicate = GetPredicate(classMap, predicate);
-            return await GetLimitAsync<T>(connection, classMap, limitCount, wherePredicate, sort, transaction, commandTimeout);
+            if (limitCount == null)
+            {
+                return await GetListAsync<T>(connection, classMap, wherePredicate, sort, transaction, commandTimeout);
+            }
+            else
+            {
+                return await GetLimitAsync<T>(connection, classMap, limitCount.Value, wherePredicate, sort, transaction, commandTimeout);
+            }
         }
 
         public async Task<IEnumerable<T>> GetPageAsync<T>(IDbConnection connection, object predicate, IList<ISort> sort, int page, int resultsPerPage, IDbTransaction transaction, int? commandTimeout) where T : class
