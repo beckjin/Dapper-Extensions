@@ -561,13 +561,14 @@ namespace DapperExtensions
 
         public async Task<int> UpdateAsync<T>(IDbConnection connection, object entity, object predicate, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties = false) where T : class
         {
+            var updateFileds = ReflectionHelper.GetObjectValues(entity);
             IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
             IPredicate wherePredicate = GetPredicate(classMap, predicate);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            string sql = SqlGenerator.Update(classMap, wherePredicate, parameters, ignoreAllKeyProperties);
+            string sql = SqlGenerator.Update(classMap, updateFileds, wherePredicate, parameters, ignoreAllKeyProperties);
+
             DynamicParameters dynamicParameters = new DynamicParameters();
-            var columns = classMap.Properties.Where(p => !(p.Ignored || p.IsReadOnly || p.KeyType == KeyType.Identity));
-            foreach (var property in ReflectionHelper.GetObjectValues(entity).Where(property => columns.Any(c => c.Name == property.Key)))
+            foreach (var property in updateFileds)
             {
                 dynamicParameters.Add(property.Key, property.Value);
             }
@@ -888,7 +889,7 @@ namespace DapperExtensions
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             if (environment != null && environment == "DEVELOPMENT")
             {
-                Console.WriteLine(sql);
+                Console.WriteLine(Environment.NewLine + sql);
             }
         }
     }
