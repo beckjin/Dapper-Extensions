@@ -19,7 +19,7 @@ namespace DapperExtensions.Tests.IntegrationTests.SqlServer
         [SetUp]
         public virtual void Setup()
         {
-            var connection = new SqlConnection("Database=dapperTest;Server=172.17.30.108;User ID=sa;Password=mingdao!@#123;");
+            var connection = new SqlConnection("Database=dapperTest;Server=.;User ID=sa;Password=123456;");
             var config = new DapperExtensionsConfiguration(typeof(AutoClassMapper<>), new List<Assembly>(), new SqlServerDialect());
             var sqlGenerator = new SqlGeneratorImpl(config);
             Db = new Database(connection, sqlGenerator);
