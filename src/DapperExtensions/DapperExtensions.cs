@@ -169,6 +169,14 @@ namespace DapperExtensions
         }
 
         /// <summary>
+        /// Executes an update query for the specified entity.
+        /// </summary>
+        public static int Update<T>(this IDbConnection connection, IDictionary<string, object> updateFileds, object predicate, IDbTransaction transaction = null, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class
+        {
+            return Instance.Update<T>(connection, updateFileds, predicate, transaction, commandTimeout, ignoreAllKeyProperties);
+        }
+
+        /// <summary>
         /// Executes a delete query for the specified entity.
         /// </summary>
         public static int Delete<T>(this IDbConnection connection, T entity, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
@@ -295,6 +303,14 @@ namespace DapperExtensions
         public static async Task<int> UpdateAsync<T>(this IDbConnection connection, object entity, object predicate, IDbTransaction transaction = null, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class
         {
             return await Instance.UpdateAsync<T>(connection, entity, predicate, transaction, commandTimeout, ignoreAllKeyProperties);
+        }
+
+        /// <summary>
+        /// Executes an update query for the specified entity.
+        /// </summary>
+        public static async Task<int> UpdateAsync<T>(this IDbConnection connection, IDictionary<string, object> updateFileds, object predicate, IDbTransaction transaction = null, int? commandTimeout = null, bool ignoreAllKeyProperties = false) where T : class
+        {
+            return await Instance.UpdateAsync<T>(connection, updateFileds, predicate, transaction, commandTimeout, ignoreAllKeyProperties);
         }
 
         /// <summary>

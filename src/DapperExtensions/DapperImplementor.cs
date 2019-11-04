@@ -22,6 +22,7 @@ namespace DapperExtensions
         dynamic Insert<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout) where T : class;
         int Update<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties) where T : class;
         int Update<T>(IDbConnection connection, object entity, object predicate, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties) where T : class;
+        int Update<T>(IDbConnection connection, IDictionary<string, object> updateFileds, object predicate, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties) where T : class;
         int Delete<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout) where T : class;
         int Delete<T>(IDbConnection connection, object predicate, IDbTransaction transaction, int? commandTimeout) where T : class;
         T Get<T>(IDbConnection connection, dynamic id, IDbTransaction transaction, int? commandTimeout) where T : class;
@@ -39,6 +40,7 @@ namespace DapperExtensions
         Task<int> InsertAsync<T>(IDbConnection connection, IEnumerable<T> entities, IDbTransaction transaction, int? commandTimeout) where T : class;
         Task<dynamic> InsertAsync<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout) where T : class;
         Task<int> UpdateAsync<T>(IDbConnection connection, object entity, object predicate, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties) where T : class;
+        Task<int> UpdateAsync<T>(IDbConnection connection, IDictionary<string, object> updateFileds, object predicate, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties) where T : class;
         Task<int> UpdateAsync<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties) where T : class;
         Task<int> DeleteAsync<T>(IDbConnection connection, T entity, IDbTransaction transaction, int? commandTimeout) where T : class;
         Task<int> DeleteAsync<T>(IDbConnection connection, object predicate, IDbTransaction transaction, int? commandTimeout) where T : class;
@@ -238,6 +240,11 @@ namespace DapperExtensions
         public int Update<T>(IDbConnection connection, object entity, object predicate, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties = false) where T : class
         {
             var updateFileds = ReflectionHelper.GetObjectValues(entity);
+            return Update<T>(connection, updateFileds, predicate, transaction, commandTimeout, ignoreAllKeyProperties);
+        }
+
+        public int Update<T>(IDbConnection connection, IDictionary<string, object> updateFileds, object predicate, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties = false) where T : class
+        {
             IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
             IPredicate wherePredicate = GetPredicate(classMap, predicate);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
@@ -562,6 +569,11 @@ namespace DapperExtensions
         public async Task<int> UpdateAsync<T>(IDbConnection connection, object entity, object predicate, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties = false) where T : class
         {
             var updateFileds = ReflectionHelper.GetObjectValues(entity);
+            return await UpdateAsync<T>(connection, updateFileds, predicate, transaction, commandTimeout, ignoreAllKeyProperties);
+        }
+
+        public async Task<int> UpdateAsync<T>(IDbConnection connection, IDictionary<string, object> updateFileds, object predicate, IDbTransaction transaction, int? commandTimeout, bool ignoreAllKeyProperties = false) where T : class
+        {
             IClassMapper classMap = SqlGenerator.Configuration.GetMap<T>();
             IPredicate wherePredicate = GetPredicate(classMap, predicate);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
