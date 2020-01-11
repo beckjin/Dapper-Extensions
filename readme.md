@@ -1,5 +1,3 @@
-**The code is based on [Dapper-Extensions](https://github.com/tmsmith/Dapper-Extensions) and extends several methods.**
-
 New Features
 --------
 * Supports asynchronous methods.
