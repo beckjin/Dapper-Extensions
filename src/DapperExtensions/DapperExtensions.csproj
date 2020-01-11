@@ -17,11 +17,11 @@
     <RepositoryUrl>https://github.com/beckjin/Dapper-Extensions/</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <SignAssembly>true</SignAssembly>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <Copyright>Copyright © 2019</Copyright>
     <Description>
-      This library  is base on Dapper-Extensions, extended several common methods.
+      This library is base on Dapper-Extensions, extended several methods.
     </Description>
   </PropertyGroup>
 
