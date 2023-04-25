@@ -1,0 +1,5 @@
+﻿CREATE TABLE Animal
+(
+    Id CHAR(36) PRIMARY KEY, 
+    Name NVARCHAR(50)
+)
