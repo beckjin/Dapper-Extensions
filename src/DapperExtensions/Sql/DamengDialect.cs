@@ -38,7 +38,5 @@ namespace DapperExtensions.Sql
         {
             return base.GetColumnName(null, columnName, alias);
         }
-
-        public override bool SupportsMultipleStatements => false;
     }
 }
