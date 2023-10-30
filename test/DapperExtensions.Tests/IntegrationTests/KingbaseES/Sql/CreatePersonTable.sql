@@ -5,7 +5,7 @@ CREATE TABLE "Person" (
     "FirstName" character varying(50 char) NOT NULL,
     "LastName" character varying(50 char) NULL,
     "DateCreated" datetime,
-    "Active" bool
+    "Active" boolean
 );
 
 ALTER SEQUENCE "Person_Id_seq" INCREMENT BY 1;
