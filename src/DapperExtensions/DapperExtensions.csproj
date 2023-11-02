@@ -7,7 +7,7 @@
     <Authors>Beck Jin</Authors>
     <Title>Dapper.Extensions.Core</Title>
     <AssemblyTitle>Dapper.Extensions.Core</AssemblyTitle>
-    <PackageTags>Dapper,NetCore</PackageTags>
+    <PackageTags>Dapper,Net</PackageTags>
     <DebugSymbols>true</DebugSymbols>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
