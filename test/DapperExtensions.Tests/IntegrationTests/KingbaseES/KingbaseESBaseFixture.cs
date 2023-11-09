@@ -22,7 +22,7 @@ namespace DapperExtensions.Tests.IntegrationTests.KingbaseES
             SqlMapper.RemoveTypeMap(typeof(Guid));
             SqlMapper.RemoveTypeMap(typeof(Guid?));
 
-            var connection = new KdbndpConnection("Server=122.112.213.199;User Id=system;Password=123456;Database=test;Port=54321");
+            var connection = new KdbndpConnection("Server=127.0.0.1;User Id=system;Password=123456;Database=test;Port=54321");
             connection.Open();
 
             var config = new DapperExtensionsConfiguration(typeof(AutoClassMapper<>), new List<Assembly>(), new KingbaseESDialect());
