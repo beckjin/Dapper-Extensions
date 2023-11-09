@@ -1,10 +1,8 @@
 ﻿DROP TABLE IF EXISTS "FooTable";
 
 CREATE TABLE "FooTable" (
-    "FooId" serial NOT NULL,
-    "First" character varying(50 char) NULL,
-    "Last" character varying(50 char) NULL,
-    "BirthDate" datetime NULL
+    "FooId" SERIAL PRIMARY KEY,
+    "First" VARCHAR(50) NULL,
+    "Last" VARCHAR(50) NULL,
+    "BirthDate" TIMESTAMP NULL
 );
-
-ALTER SEQUENCE "FooTable_FooId_seq" INCREMENT BY 1;
