@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>Dapper.Extensions.Core</PackageId>
     <TargetFramework>net6.0</TargetFramework>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
     <Authors>Beck Jin</Authors>
     <Title>Dapper.Extensions.Core</Title>
     <AssemblyTitle>Dapper.Extensions.Core</AssemblyTitle>
@@ -19,7 +19,7 @@
     <SignAssembly>true</SignAssembly>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <Copyright>Copyright © 2023</Copyright>
+    <Copyright>Copyright © 2024</Copyright>
     <Description>
       This library is base on Dapper-Extensions, extended several methods.
     </Description>

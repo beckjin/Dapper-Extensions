@@ -1,0 +1,8 @@
+﻿DROP TABLE IF EXISTS FooTable;
+
+CREATE TABLE FooTable (
+    FooId INT IDENTITY(1,1) PRIMARY KEY,
+    First VARCHAR(50),
+    Last VARCHAR(50),
+    BirthDate DATETIME
+)
