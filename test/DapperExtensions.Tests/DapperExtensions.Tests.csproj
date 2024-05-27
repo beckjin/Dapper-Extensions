@@ -33,7 +33,7 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.111" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
-    <PackageReference Include="XuguClient" Version="3.3.5-bionic" />
+    <PackageReference Include="XuguClient" Version="3.3.3-bionic.2" />
   </ItemGroup>
 
   <ItemGroup>
