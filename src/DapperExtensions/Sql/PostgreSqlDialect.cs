@@ -7,7 +7,7 @@ namespace DapperExtensions.Sql
 {
     public class PostgreSqlDialect : SqlDialectBase
     {
-        public override string GetIdentitySql(string tableName)
+        public override string GetIdentitySql(string tableName, string identityColumnName)
         {
             return "SELECT LASTVAL() AS Id";
         }

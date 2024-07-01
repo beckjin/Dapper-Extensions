@@ -287,7 +287,9 @@ namespace DapperExtensions.Sql
 
         public virtual string IdentitySql(IClassMapper classMap)
         {
-            return Configuration.Dialect.GetIdentitySql(GetTableName(classMap));
+            var identityColumn = classMap.Properties.SingleOrDefault(p => p.KeyType == KeyType.Identity);
+
+            return Configuration.Dialect.GetIdentitySql(GetTableName(classMap), identityColumn?.ColumnName);
         }
 
         public virtual string GetTableName(IClassMapper map)

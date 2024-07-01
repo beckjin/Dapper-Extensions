@@ -16,9 +16,11 @@
     <EmbeddedResource Include="IntegrationTests\KingbaseES\Sql\*.sql" />
     <EmbeddedResource Include="IntegrationTests\OceanBase\Sql\*.sql" />
     <EmbeddedResource Include="IntegrationTests\Xugu\Sql\*.sql" />
+    <EmbeddedResource Include="IntegrationTests\Highgo\Sql\*.sql" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="HAP_Nhgdb" Version="1.0.0" />
     <PackageReference Include="HgDMProvider" Version="1.0.1" />
     <PackageReference Include="IBM.Data.DB2.Core" Version="1.3.0.100" />
     <PackageReference Include="Kdbndp" Version="8.0.0" />

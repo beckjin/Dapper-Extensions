@@ -7,7 +7,7 @@ namespace DapperExtensions.Sql
     {
         public OracleDialect() { }
 
-        public override string GetIdentitySql(string tableName)
+        public override string GetIdentitySql(string tableName, string identityColumnName)
         {
             throw new System.NotImplementedException("Oracle does not support get last inserted identity.");
         }

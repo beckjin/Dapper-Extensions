@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>Dapper.Extensions.Core</PackageId>
     <TargetFramework>net6.0</TargetFramework>
-    <Version>3.2.0</Version>
+    <Version>3.3.0</Version>
     <Authors>Beck Jin</Authors>
     <Title>Dapper.Extensions.Core</Title>
     <AssemblyTitle>Dapper.Extensions.Core</AssemblyTitle>

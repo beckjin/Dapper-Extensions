@@ -14,7 +14,7 @@ namespace DapperExtensions.Sql
             get { return '"'; }
         }
 
-        public override string GetIdentitySql(string tableName)
+        public override string GetIdentitySql(string tableName, string identityColumnName)
         {
             return "SELECT LAST_INSERT_ID() AS ID";
         }

@@ -4,21 +4,21 @@ using System.Linq;
 
 namespace DapperExtensions.Sql
 {
-    public class MySqlDialect : SqlDialectBase
+    public class HighgoDialect : SqlDialectBase
     {
         public override char OpenQuote
         {
-            get { return '`'; }
+            get { return '"'; }
         }
 
         public override char CloseQuote
         {
-            get { return '`'; }
+            get { return '"'; }
         }
 
         public override string GetIdentitySql(string tableName, string identityColumnName)
         {
-            return "SELECT CONVERT(LAST_INSERT_ID(), SIGNED INTEGER) AS ID";
+            return $"SELECT last_insert_id('{tableName.ToLower().Replace("\"", string.Empty)}','{identityColumnName}') AS ID";
         }
 
         public override string GetPagingSql(string sql, int page, int resultsPerPage, IDictionary<string, object> parameters)
@@ -40,6 +40,11 @@ namespace DapperExtensions.Sql
             string result = string.Format("SELECT {0} FROM {1} {2} {3} LIMIT @count", column, tableName, where, orderBy);
             parameters.Add("@count", count);
             return result;
+        }
+
+        public override string GetColumnName(string prefix, string columnName, string alias)
+        {
+            return base.GetColumnName(null, columnName, alias);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace DapperExtensions.Sql
         string EmptyExpression { get; }
         string GetTableName(string schemaName, string tableName, string alias);
         string GetColumnName(string prefix, string columnName, string alias);
-        string GetIdentitySql(string tableName);
+        string GetIdentitySql(string tableName, string identityColumnName);
         string GetPagingSql(string sql, int page, int resultsPerPage, IDictionary<string, object> parameters);
         string GetSetSql(string sql, int firstResult, int maxResults, IDictionary<string, object> parameters);
         string GetLimitCountSql(string column, string tableName, string where, string orderBy, int count, IDictionary<string, object> parameters);
@@ -106,7 +106,7 @@ namespace DapperExtensions.Sql
             return result.ToString();
         }
 
-        public abstract string GetIdentitySql(string tableName);
+        public abstract string GetIdentitySql(string tableName, string identityColumnName);
 
         public abstract string GetPagingSql(string sql, int page, int resultsPerPage, IDictionary<string, object> parameters);
 

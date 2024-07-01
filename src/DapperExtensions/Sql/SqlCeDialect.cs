@@ -47,7 +47,7 @@ namespace DapperExtensions.Sql
             return result.ToString();
         }
 
-        public override string GetIdentitySql(string tableName)
+        public override string GetIdentitySql(string tableName, string identityColumnName)
         {
             return "SELECT CAST(@@IDENTITY AS BIGINT) AS [Id]";
         }

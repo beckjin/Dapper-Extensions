@@ -6,7 +6,7 @@ namespace DapperExtensions.Sql
 {
     public class SqliteDialect : SqlDialectBase
     {
-        public override string GetIdentitySql(string tableName)
+        public override string GetIdentitySql(string tableName, string identityColumnName)
         {
             return "SELECT LAST_INSERT_ROWID() AS [Id]";
         }

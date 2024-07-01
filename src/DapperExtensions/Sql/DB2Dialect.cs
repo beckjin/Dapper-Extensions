@@ -7,7 +7,7 @@ namespace DapperExtensions.Sql
 {
     public class DB2Dialect : SqlDialectBase
     {
-        public override string GetIdentitySql(string tableName)
+        public override string GetIdentitySql(string tableName, string identityColumnName)
         {
             return "SELECT CAST(IDENTITY_VAL_LOCAL() AS BIGINT) AS \"ID\" FROM SYSIBM.SYSDUMMY1";
         }

@@ -695,7 +695,7 @@ namespace DapperExtensions.Tests.Sql
             [Test]
             public void CallsDialect()
             {
-                Dialect.Setup(d => d.GetIdentitySql("TableName")).Returns("IdentitySql").Verifiable();
+                Dialect.Setup(d => d.GetIdentitySql("TableName", string.Empty)).Returns("IdentitySql").Verifiable();
                 Generator.Setup(g => g.GetTableName(ClassMap.Object)).Returns("TableName").Verifiable();
                 var result = Generator.Object.IdentitySql(ClassMap.Object);
                 Assert.AreEqual("IdentitySql", result);

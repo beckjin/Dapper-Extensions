@@ -210,7 +210,7 @@ namespace DapperExtensions.Tests.Sql
 
         public class TestDialect : SqlDialectBase
         {
-            public override string GetIdentitySql(string tableName)
+            public override string GetIdentitySql(string tableName, string identityColumnName)
             {
                 throw new NotImplementedException();
             }
